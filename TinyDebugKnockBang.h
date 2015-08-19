@@ -19,6 +19,10 @@
 
   You should have received a copy of the GNU Lesser General Public License 
   along with Arduino-Tiny.  If not, see <http://www.gnu.org/licenses/>.
+  
+  Modified 8/19/2015 Spence Konde
+  Test for F macro to determine whether to do the typedef for _FlashStringHelper
+  Add support for Tiny 48,88,441,841 (though the latter is unlikely to need it)
 
 ==============================================================================*/
 #ifndef TinyDebugKnockBang_h
@@ -38,6 +42,9 @@
 
 #define MISO_PASTE(lft,rgt)       lft ## rgt
 #define MISO_MAKE_REG(lft,rgt)    MISO_PASTE(lft,rgt)
+#if !defined(F)
+  typedef fstr_t __FlashStringHelper;
+#endif
 
 #if defined( __AVR_ATtiny13__ ) || defined( __AVR_ATtiny25__ ) || defined( __AVR_ATtiny45__ ) || defined( __AVR_ATtiny85__ )
 
@@ -48,11 +55,7 @@
 
   #define KNOCKBANG_SENDER_AVAILABLE 1
 
-  #if TC_VERSION < 200
-    typedef fstr_t __FlashStringHelper;
-  #endif
-
-#elif defined( __AVR_ATtiny24__ ) || defined( __AVR_ATtiny44__ ) || defined( __AVR_ATtiny84__ )
+#elif defined( __AVR_ATtiny24__ ) || defined( __AVR_ATtiny44__ ) || defined( __AVR_ATtiny84__ ) || defined( __AVR_ATtiny441__ ) || defined( __AVR_ATtiny841__ )
 
   #define MISO_DDR    DDRA
   #define MISO_PORT   PORTA
@@ -60,10 +63,6 @@
   #define MISO_BIT    5
 
   #define KNOCKBANG_SENDER_AVAILABLE 1
-
-  #if TC_VERSION < 200
-    typedef fstr_t __FlashStringHelper;
-  #endif
 
 #elif defined( __AVR_ATtiny2313__ ) || defined( __AVR_ATtiny4313__ )
 
@@ -74,11 +73,8 @@
 
   #define KNOCKBANG_SENDER_AVAILABLE 1
 
-  #if TC_VERSION < 200
-    typedef fstr_t __FlashStringHelper;
-  #endif
 
-#elif defined( __AVR_ATmega328P__ ) || defined( __AVR_ATmega328__ ) || defined( __AVR_ATmega168__ )
+#elif defined( __AVR_ATmega328P__ ) || defined( __AVR_ATmega328__ ) || defined( __AVR_ATmega168__ ) || defined (__AVR_ATtiny88__) || defined (__AVR_ATtiny48__)
 
   #define MISO_DDR    DDRB
   #define MISO_PORT   PORTB
@@ -95,10 +91,6 @@
   #define MISO_BIT    1
 
   #define KNOCKBANG_SENDER_AVAILABLE 1
-
-  #if TC_VERSION < 200
-    typedef fstr_t __FlashStringHelper;
-  #endif
 
 #else
   #warning Missing MISO_* definitions.  KnockBang send functions are not available.
